@@ -1,0 +1,20 @@
+{
+  "accuracy": 0.7857,
+  "roc_auc": 0.7096,
+  "cv_roc_auc_mean": 0.7772,
+  "cv_roc_auc_std": 0.0377,
+  "feature_importance": {
+    "overtime": 0.15907365083694458,
+    "job_role": 0.09859542548656464,
+    "years_at_company": 0.08533741533756256,
+    "monthly_income": 0.0836506336927414,
+    "age": 0.0820656344294548,
+    "environment_satisfaction": 0.08162384480237961,
+    "department_name": 0.08031157404184341,
+    "job_satisfaction": 0.07633162289857864,
+    "distance_from_home": 0.06841009110212326,
+    "education": 0.0652683824300766,
+    "gender": 0.06407693773508072,
+    "performance_rating": 0.055254824459552765
+  }
+}

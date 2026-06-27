@@ -1,0 +1,9 @@
+{
+  "total_orders": 96463,
+  "anomaly_count": 4824,
+  "anomaly_pct": 5.0,
+  "avg_price_normal": 117.37,
+  "avg_price_anomaly": 510.59,
+  "avg_delivery_normal": 11.4,
+  "avg_delivery_anomaly": 25.1
+}

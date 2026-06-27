@@ -1,0 +1,5 @@
+{
+  "forecast_horizon_days": 90,
+  "avg_predicted_daily_orders": 226.6,
+  "peak_predicted_orders": 487.4
+}
