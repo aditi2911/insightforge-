@@ -50,6 +50,7 @@ page = st.sidebar.radio("Navigate", [
     "🔮 Demand Forecast",
     "🚨 Anomaly Detection",
     "🤖 Attrition Predictor",
+    "💬 Ask InsightForge",
 ])
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -407,3 +408,67 @@ elif page == "🤖 Attrition Predictor":
             st.warning("⚠️ Overtime is the strongest attrition driver. Consider workload rebalancing.")
         if monthly_income < 3000 and prob > 0.4:
             st.warning("⚠️ Below-average income combined with other factors increases risk significantly.")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 7 — TEXT TO SQL
+# ══════════════════════════════════════════════════════════════════════════════
+
+elif page == "💬 Ask InsightForge":
+    st.title("💬 Ask InsightForge")
+    st.caption("Ask any business question in plain English — powered by Llama 3 + PostgreSQL")
+
+    import sys
+    import os
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "api"))
+    from text_to_sql import text_to_sql_pipeline
+
+    examples = [
+        "What are the top 5 product categories by total revenue?",
+        "Which department has the highest attrition rate?",
+        "What is the average delivery time by state?",
+        "How many orders were delivered in 2018?",
+        "Which state has the most customers?",
+    ]
+
+    st.subheader("Example questions")
+    cols = st.columns(3)
+    for i, ex in enumerate(examples):
+        if cols[i % 3].button(ex, key=f"ex_{i}"):
+            st.session_state["question"] = ex
+
+    st.divider()
+
+    question = st.text_input(
+        "Your question",
+        value=st.session_state.get("question", ""),
+        placeholder="e.g. What are the top 10 customers by order value?"
+    )
+
+    if st.button("🔍 Run Analysis", type="primary") and question:
+        with st.spinner("Generating SQL and analysis..."):
+            result = text_to_sql_pipeline(question)
+
+        if result["error"]:
+            st.error(f"Error: {result['error']}")
+        else:
+            st.success(f"Found {result['row_count']} results")
+
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                st.subheader("Generated SQL")
+                st.code(result["sql"], language="sql")
+            with col2:
+                st.subheader("Business Insight")
+                st.info(result["narrative"])
+
+            st.subheader("Query Results")
+            df = pd.DataFrame(result["results"])
+            st.dataframe(df, use_container_width=True)
+
+            if len(df) > 0 and len(df.columns) >= 2:
+                num_cols = df.select_dtypes(include="number").columns.tolist()
+                cat_cols = df.select_dtypes(exclude="number").columns.tolist()
+                if num_cols and cat_cols:
+                    fig = px.bar(df, x=cat_cols[0], y=num_cols[0],
+                                 color_discrete_sequence=["#FF6B6B"])
+                    st.plotly_chart(fig, use_container_width=True)
